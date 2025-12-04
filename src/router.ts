@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import {createProduct, getProducts, getProductById, updateProduct} from './handlers/product'
+import {createProduct, getProducts, getProductById, updateProduct, updateAvailability, deleteProduct} from './handlers/product'
 import {body, param} from 'express-validator'
 import { handleImputError } from './middleware'
 
@@ -33,8 +33,15 @@ router.put('/:id',
     handleImputError,
     updateProduct)
 
-router.patch('/',(req,res)=>{
-    res.json("HOLA patch")
-})
+router.patch('/', 
+    //validacion
+    param('id').isInt().withMessage('Id no valido'), 
+    handleImputError,  
+    updateAvailability)
+
+router.delete('/:id',    
+    param('id').isInt().withMessage('Id no valido'), 
+    handleImputError,  
+    deleteProduct)
 
 export default router
