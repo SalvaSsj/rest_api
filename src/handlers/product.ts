@@ -1,6 +1,7 @@
 import {Request,Response} from 'express'
 import { check,validationResult } from 'express-validator'
 import Product from '../models/Product.model'
+import { json } from 'sequelize'
 
 export const getProducts = async(req: Request, res: Response) =>{
     try {
@@ -9,7 +10,6 @@ export const getProducts = async(req: Request, res: Response) =>{
                 ["id","ASC"]
             ]
         })
-        res.json("pan")
         res.json({data: products})
     } catch (error) {
         console.log(error)
@@ -18,7 +18,19 @@ export const getProducts = async(req: Request, res: Response) =>{
 
 export const getProductById = async(req: Request, res: Response) =>{
     try {
-        console.log(req.params.id)
+        const {id}= req.params
+        const product = await Product.findByPk(id)
+
+        if(!product){
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            })
+        }
+
+        await product.update(req.body)
+        await product.save()
+
+        res.json({data: product})
     } catch (error) {
         console.log(error)
     }
@@ -30,6 +42,26 @@ export const createProduct = async (req: Request,res: Response)=>{
         const product = await Product.create(req.body)    
         res.json({data: product})
     }catch(error){
+        console.log(error)
+    }
+}
+
+export const updateProduct = async (req: Request, res: Response)=>{
+try {
+        const {id}= req.params
+        const product = await Product.findByPk(id)
+
+        if(!product){
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            })
+        }
+        // Actualizar
+
+
+
+        res.json({data: product})
+    } catch (error) {
         console.log(error)
     }
 }
